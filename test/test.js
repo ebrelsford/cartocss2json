@@ -64,6 +64,15 @@ describe('marker', function () {
         assert.deepEqual(out[0][0].style, expected);
     });
 
+    it('should handle marker-fill-opacity', function () {
+        var s = '#world { marker-fill-opacity: 0.2; }',
+            out = c2l.out(c2l.parse(s));
+        var expected = {
+            fillOpacity: 0.2
+        };
+        assert.deepEqual(out[0][0].style, expected);
+    });
+
     it('should handle marker-line-color', function () {
         var s = '#world { marker-line-color: #fff; }',
             out = c2l.out(c2l.parse(s));

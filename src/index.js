@@ -79,6 +79,10 @@ function property(name, value) {
                 fillColor: '#' + rgbHex(...value.rgb),
                 fillOpacity: value.alpha
             };
+        case 'marker-fill-opacity':
+            return {
+                fillOpacity: value.value
+            };
         case 'marker-width':
             return {
                 radius: value.value
