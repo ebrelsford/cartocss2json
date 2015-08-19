@@ -67,6 +67,12 @@ function property(name, value) {
             return {
                 weight: value.value
             };
+        case 'marker-fill':
+            return {
+                fill: true,
+                fillColor: '#' + rgbHex(...value.rgb),
+                fillOpacity: value.alpha
+            };
         case 'polygon-fill':
             return {
                 fill: true,

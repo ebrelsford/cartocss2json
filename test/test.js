@@ -52,6 +52,19 @@ describe('line', function () {
     });
 });
 
+describe('marker', function () {
+    it('should handle marker-fill', function () {
+        var s = '#world { marker-fill: #fff; }',
+            out = c2l.out(c2l.parse(s));
+        var expected = {
+            fill: true,
+            fillColor: '#ffffff',
+            fillOpacity: 1
+        };
+        assert.deepEqual(out[0][0].style, expected);
+    });
+});
+
 describe('polygon', function () {
     it('should handle simple polygons', function () {
         var s = '#world { polygon-fill: #fff; polygon-opacity: 0.2; }',
