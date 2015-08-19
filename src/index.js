@@ -73,6 +73,10 @@ function property(name, value) {
                 opacity: value.alpha,
                 stroke: true
             };
+        case 'marker-line-opacity':
+            return {
+                opacity: value.value
+            };
         case 'marker-line-width':
             return {
                 weight: value.value
