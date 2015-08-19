@@ -50,12 +50,21 @@ function styleRule(rule) {
 function styleSubRule(rule) {
     var style = {};
     rule.rules.forEach(function (rule) {
-        _underscore2['default'].extend(style, property(rule.name, rule.value.value[0].value[0]));
+        _underscore2['default'].extend(style, property(rule.name, getValue(rule.value.value)));
     });
     return {
         layer: rule.elements[0].clean,
         style: style
     };
+}
+
+function getValue(value) {
+    if (value.length > 1) {
+        return value.map(function (e) {
+            return e.value;
+        });
+    }
+    return value[0].value[0];
 }
 
 function property(name, value) {
@@ -68,6 +77,10 @@ function property(name, value) {
             return {
                 color: '#' + _rgbHex2['default'].apply(undefined, _toConsumableArray(value.rgb)),
                 opacity: value.alpha
+            };
+        case 'line-dasharray':
+            return {
+                dashArray: value.join(' ')
             };
         case 'line-opacity':
             return {

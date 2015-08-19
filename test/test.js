@@ -33,6 +33,15 @@ describe('line', function () {
         assert.deepEqual(out[0][0].style, expected);
     });
 
+    it('should handle line-dasharray', function () {
+        var s = '#world { line-dasharray: 8, 2, 8; }',
+            out = c2l.out(c2l.parse(s));
+        var expected = {
+            dashArray: '8 2 8'
+        };
+        assert.deepEqual(out[0][0].style, expected);
+    });
+
     it('should handle line join', function () {
         var s = '#world { line-join: round; }',
             out = c2l.out(c2l.parse(s));
