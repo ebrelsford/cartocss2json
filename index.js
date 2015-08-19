@@ -100,6 +100,10 @@ function property(name, value) {
                 fillColor: '#' + _rgbHex2['default'].apply(undefined, _toConsumableArray(value.rgb)),
                 fillOpacity: value.alpha
             };
+        case 'marker-width':
+            return {
+                radius: value.value
+            };
         case 'polygon-fill':
             return {
                 fill: true,

@@ -73,6 +73,10 @@ function property(name, value) {
                 fillColor: '#' + rgbHex(...value.rgb),
                 fillOpacity: value.alpha
             };
+        case 'marker-width':
+            return {
+                radius: value.value
+            };
         case 'polygon-fill':
             return {
                 fill: true,
