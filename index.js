@@ -94,6 +94,12 @@ function property(name, value) {
             return {
                 weight: value.value
             };
+        case 'marker-line-color':
+            return {
+                color: '#' + _rgbHex2['default'].apply(undefined, _toConsumableArray(value.rgb)),
+                opacity: value.alpha,
+                stroke: true
+            };
         case 'marker-fill':
             return {
                 fill: true,

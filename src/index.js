@@ -67,6 +67,12 @@ function property(name, value) {
             return {
                 weight: value.value
             };
+        case 'marker-line-color':
+            return {
+                color: '#' + rgbHex(...value.rgb),
+                opacity: value.alpha,
+                stroke: true
+            };
         case 'marker-fill':
             return {
                 fill: true,
