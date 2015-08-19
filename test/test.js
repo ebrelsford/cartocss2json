@@ -3,7 +3,7 @@ var chai = require('chai');
 var assert = chai.assert;
 
 describe('line', function () {
-    it('should handle simple lines', function () {
+    it('should handle line-color and line-width', function () {
         var s = '#world { line-color: #fff; line-width: 3; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
@@ -14,7 +14,7 @@ describe('line', function () {
         assert.deepEqual(out[0][0].style, expected);
     });
 
-    it('should handle line opacity', function () {
+    it('should handle line-opacity', function () {
         var s = '#world { line-color: #fff; line-opacity: 0.2; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
@@ -24,7 +24,7 @@ describe('line', function () {
         assert.deepEqual(out[0][0].style, expected);
     });
 
-    it('should handle line cap', function () {
+    it('should handle line-cap', function () {
         var s = '#world { line-cap: round; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
@@ -42,7 +42,7 @@ describe('line', function () {
         assert.deepEqual(out[0][0].style, expected);
     });
 
-    it('should handle line join', function () {
+    it('should handle line-join', function () {
         var s = '#world { line-join: round; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
