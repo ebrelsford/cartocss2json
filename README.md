@@ -22,6 +22,22 @@ TODO
  * command line script
 
 
+WON'T DO
+--------
+
+The plan is to support only those CartoCSS properties that map onto the
+Leaflet's SVG path properties. As such, there is no plan to support the 
+following properties:
+
+ * `background-*`
+ * `building-*`
+ * `comp-op`
+ * `point-*`
+ * `raster-*`
+ * `shield-*`
+ * `text-*`
+
+
 Contributing
 ------------
 
