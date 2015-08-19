@@ -40,6 +40,10 @@ function property(name, value) {
                 color: '#' + rgbHex(...value.rgb),
                 opacity: value.alpha
             };
+        case 'line-opacity':
+            return {
+                opacity: value.value
+            };
         case 'line-width':
             return {
                 weight: value.value

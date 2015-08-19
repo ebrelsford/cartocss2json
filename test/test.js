@@ -13,6 +13,16 @@ describe('line', function () {
         };
         assert.deepEqual(out[0][0].style, expected);
     });
+
+    it('should handle line opacity', function () {
+        var s = '#world { line-color: #fff; line-opacity: 0.2; }',
+            out = c2l.out(c2l.parse(s));
+        var expected = {
+            color: '#ffffff',
+            opacity: 0.2
+        };
+        assert.deepEqual(out[0][0].style, expected);
+    });
 });
 
 describe('polygon', function () {

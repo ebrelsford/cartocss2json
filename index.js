@@ -65,6 +65,10 @@ function property(name, value) {
                 color: '#' + _rgbHex2['default'].apply(undefined, _toConsumableArray(value.rgb)),
                 opacity: value.alpha
             };
+        case 'line-opacity':
+            return {
+                opacity: value.value
+            };
         case 'line-width':
             return {
                 weight: value.value
