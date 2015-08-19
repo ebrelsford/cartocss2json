@@ -100,6 +100,10 @@ function property(name, value) {
                 opacity: value.alpha,
                 stroke: true
             };
+        case 'marker-line-width':
+            return {
+                weight: value.value
+            };
         case 'marker-fill':
             return {
                 fill: true,
