@@ -44,6 +44,10 @@ function property(name, value) {
             return {
                 opacity: value.value
             };
+        case 'line-join':
+            return {
+                lineJoin: value.value
+            };
         case 'line-width':
             return {
                 weight: value.value

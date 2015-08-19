@@ -23,6 +23,15 @@ describe('line', function () {
         };
         assert.deepEqual(out[0][0].style, expected);
     });
+
+    it('should handle line join', function () {
+        var s = '#world { line-join: round; }',
+            out = c2l.out(c2l.parse(s));
+        var expected = {
+            lineJoin: 'round'
+        };
+        assert.deepEqual(out[0][0].style, expected);
+    });
 });
 
 describe('polygon', function () {
