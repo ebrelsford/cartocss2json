@@ -2,8 +2,8 @@ var c2l = require('../index');
 var chai = require('chai');
 var assert = chai.assert;
 
-describe('simple', function () {
-    it('should not be terrible', function () {
+describe('line', function () {
+    it('should handle simple lines', function () {
         var s = '#world { line-color: #fff; line-width: 3; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
