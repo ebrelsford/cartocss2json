@@ -14,3 +14,16 @@ describe('line', function () {
         assert.deepEqual(out[0][0].style, expected);
     });
 });
+
+describe('polygon', function () {
+    it('should handle simple polygons', function () {
+        var s = '#world { polygon-fill: #fff; polygon-opacity: 0.2; }',
+            out = c2l.out(c2l.parse(s));
+        var expected = {
+            fill: true,
+            fillColor: '#ffffff',
+            fillOpacity: 0.2
+        };
+        assert.deepEqual(out[0][0].style, expected);
+    });
+});

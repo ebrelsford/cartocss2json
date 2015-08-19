@@ -44,6 +44,16 @@ function property(name, value) {
             return {
                 weight: value.value
             };
+        case 'polygon-fill':
+            return {
+                fill: true,
+                fillColor: '#' + rgbHex(...value.rgb),
+                fillOpacity: value.alpha
+            };
+        case 'polygon-opacity':
+            return {
+                fillOpacity: value.value
+            };
         default:
             console.warn(`Unknown property "${name}"`);
     }
