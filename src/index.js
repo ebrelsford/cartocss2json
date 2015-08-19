@@ -35,6 +35,10 @@ function styleSubRule(rule) {
 
 function property(name, value) {
     switch (name) {
+        case 'line-cap':
+            return {
+                lineCap: value.value
+            };
         case 'line-color':
             return {
                 color: '#' + rgbHex(...value.rgb),
