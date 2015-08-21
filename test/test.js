@@ -199,7 +199,7 @@ describe('polygon', function () {
 
 describe('layers', function () {
     it('should handle multiple layers', function () {
-        var s = '#world { polygon-fill: #ff0; } #sea[zoom > 5] { polygon-fill: #fff; polygon-opacity: 0.2; }',
+        var s = '#world { polygon-fill: #ff0; } #sea { polygon-fill: #fff; polygon-opacity: 0.2; }',
             parsed = c2l.parse(s);
         var out = c2l.out(parsed);
 
