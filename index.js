@@ -31,14 +31,33 @@ function parse(cartocss) {
     var parser = parser.parse(cartocss);
     var ruleList = parser.toList(env);
 
-    ruleList = renderer.inheritDefinitions(ruleList, env);
-    return renderer.sortStyles(ruleList, env);
+    var layerRules = {};
+    var layers = ruleList.map(function (rule) {
+        return rule.elements[0].clean;
+    });
+    layers.forEach(function (layer) {
+        var matchingRules = ruleList.filter(function (rule) {
+            return rule.elements[0].clean === layer;
+        });
+        var layerRuleList = renderer.inheritDefinitions(matchingRules, env);
+        var layerRulesSorted = renderer.sortStyles(layerRuleList, env);
+        layerRules[layer] = layerRulesSorted;
+    });
+    return layerRules;
 }
 
 function out(rules) {
-    return rules.map(function (rule) {
-        return styleRule(rule);
+    var layerRules = {};
+    _underscore2['default'].keys(rules).forEach(function (layer) {
+        var styledRules = rules[layer].map(function (rule) {
+            return styleRule(rule);
+        });
+        if (styledRules.length > 1) {
+            console.warn('cartocss2leaflet.out(): More styledRules than expected');
+        }
+        layerRules[layer] = styledRules[0];
     });
+    return layerRules;
 }
 
 function styleRule(rule) {
@@ -52,10 +71,7 @@ function styleSubRule(rule) {
     rule.rules.forEach(function (rule) {
         _underscore2['default'].extend(style, property(rule.name, getValue(rule.value.value)));
     });
-    return {
-        layer: rule.elements[0].clean,
-        style: style
-    };
+    return { style: style };
 }
 
 function getValue(value) {

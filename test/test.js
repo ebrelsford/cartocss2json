@@ -7,48 +7,78 @@ describe('line', function () {
         var s = '#world { line-color: #fff; line-width: 3; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            color: '#ffffff',
-            opacity: 1,
-            weight: 3
+            world: [
+                {
+                    style: {
+                        color: '#ffffff',
+                        opacity: 1,
+                        weight: 3
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 
     it('should handle line-opacity', function () {
         var s = '#world { line-color: #fff; line-opacity: 0.2; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            color: '#ffffff',
-            opacity: 0.2
+            world: [
+                {
+                    style: {
+                        color: '#ffffff',
+                        opacity: 0.2
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 
     it('should handle line-cap', function () {
         var s = '#world { line-cap: round; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            lineCap: 'round'
+            world: [
+                {
+                    style: {
+                        lineCap: 'round'
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 
     it('should handle line-dasharray', function () {
         var s = '#world { line-dasharray: 8, 2, 8; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            dashArray: '8 2 8'
+            world: [
+                {
+                    style: {
+                        dashArray: '8 2 8'
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 
     it('should handle line-join', function () {
         var s = '#world { line-join: round; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            lineJoin: 'round'
+            world: [
+                {
+                    style: {
+                        lineJoin: 'round'
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 });
 
@@ -57,58 +87,94 @@ describe('marker', function () {
         var s = '#world { marker-fill: #fff; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            fill: true,
-            fillColor: '#ffffff',
-            fillOpacity: 1
+            world: [
+                {
+                    style: {
+                        fill: true,
+                        fillColor: '#ffffff',
+                        fillOpacity: 1
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 
     it('should handle marker-fill-opacity', function () {
         var s = '#world { marker-fill-opacity: 0.2; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            fillOpacity: 0.2
+            world: [
+                {
+                    style: {
+                        fillOpacity: 0.2
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 
     it('should handle marker-line-color', function () {
         var s = '#world { marker-line-color: #fff; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            stroke: true,
-            color: '#ffffff',
-            opacity: 1
+            world: [
+                {
+                    style: {
+                        stroke: true,
+                        color: '#ffffff',
+                        opacity: 1
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 
     it('should handle marker-line-opacity', function () {
         var s = '#world { marker-line-opacity: 0.2; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            opacity: 0.2
+            world: [
+                {
+                    style: {
+                        opacity: 0.2
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 
     it('should handle marker-line-width', function () {
         var s = '#world { marker-line-width: 10; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            weight: 10
+            world: [
+                {
+                    style: {
+                        weight: 10
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 
     it('should handle marker-width', function () {
         var s = '#world { marker-width: 15; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            radius: 15
+            world: [
+                {
+                    style: {
+                        radius: 15
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
     });
 });
 
@@ -117,10 +183,46 @@ describe('polygon', function () {
         var s = '#world { polygon-fill: #fff; polygon-opacity: 0.2; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
-            fill: true,
-            fillColor: '#ffffff',
-            fillOpacity: 0.2
+            world: [
+                {
+                    style: {
+                        fill: true,
+                        fillColor: '#ffffff',
+                        fillOpacity: 0.2
+                    }
+                }
+            ]
         };
-        assert.deepEqual(out[0][0].style, expected);
+        assert.deepEqual(out, expected);
+    });
+});
+
+describe('layers', function () {
+    it('should handle multiple layers', function () {
+        var s = '#world { polygon-fill: #ff0; } #sea[zoom > 5] { polygon-fill: #fff; polygon-opacity: 0.2; }',
+            parsed = c2l.parse(s);
+        var out = c2l.out(parsed);
+
+        var expected = {
+            sea: [
+                {
+                    style: {
+                        fill: true,
+                        fillColor: '#ffffff',
+                        fillOpacity: 0.2
+                    }
+                }
+            ],
+            world: [
+                {
+                    style: {
+                        fill: true,
+                        fillColor: '#ffff00',
+                        fillOpacity: 1
+                    }
+                }
+            ]
+        };
+        assert.deepEqual(out, expected);
     });
 });

@@ -10,12 +10,29 @@ export function parse(cartocss) {
     var parser = parser.parse(cartocss);
     var ruleList = parser.toList(env);
 
-    ruleList = renderer.inheritDefinitions(ruleList, env);
-    return renderer.sortStyles(ruleList, env);
+    var layerRules = {};
+    var layers = ruleList.map((rule) => rule.elements[0].clean);
+    layers.forEach((layer) => {
+        var matchingRules = ruleList.filter((rule) => {
+            return rule.elements[0].clean === layer;
+        });
+        var layerRuleList = renderer.inheritDefinitions(matchingRules, env);
+        var layerRulesSorted = renderer.sortStyles(layerRuleList, env);
+        layerRules[layer] = layerRulesSorted;
+    });
+    return layerRules;
 }
 
 export function out(rules) {
-    return rules.map(rule => styleRule(rule));
+    var layerRules = {};
+    _.keys(rules).forEach((layer) => {
+        var styledRules = rules[layer].map(rule => styleRule(rule));
+        if (styledRules.length > 1) {
+            console.warn('cartocss2leaflet.out(): More styledRules than expected');
+        }
+        layerRules[layer] = styledRules[0];
+    });
+    return layerRules;
 }
 
 function styleRule(rule) {
@@ -27,10 +44,7 @@ function styleSubRule(rule) {
     rule.rules.forEach(function (rule) {
         _.extend(style, property(rule.name, getValue(rule.value.value)));
     });
-    return {
-        layer: rule.elements[0].clean,
-        style: style
-    };
+    return { style: style };
 }
 
 function getValue(value) {
