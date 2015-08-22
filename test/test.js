@@ -260,4 +260,123 @@ describe('zoom', function () {
         };
         assert.deepEqual(out, expected);
     });
+
+    it('should handle zoom <', function () {
+        var s = '#world { polygon-fill: #ff0; } #world[zoom < 10] { polygon-fill: #fff; polygon-opacity: 0.2; }',
+            parsed = c2l.parse(s);
+        var out = c2l.out(parsed);
+
+        var expected = {
+            world: [
+                {
+                    style: {
+                        fill: true,
+                        fillColor: '#ffff00',
+                        fillOpacity: 1
+                    }
+                },
+                {
+                    conditions: [
+                        {
+                            type: 'zoom',
+                            operator: '<=',
+                            value: 9
+                        }
+                    ],
+                    style: {
+                        fill: true,
+                        fillColor: '#ffffff',
+                        fillOpacity: 0.2
+                    }
+                }
+            ]
+        };
+        assert.deepEqual(out, expected);
+    });
+
+    it('should handle zoom IN', function () {
+        var s = '#world { polygon-fill: #ff0; } #world[zoom > 10][zoom < 15] { polygon-fill: #fff; polygon-opacity: 0.2; }',
+            parsed = c2l.parse(s);
+        var out = c2l.out(parsed);
+
+        var expected = {
+            world: [
+                {
+                    style: {
+                        fill: true,
+                        fillColor: '#ffff00',
+                        fillOpacity: 1
+                    }
+                },
+                {
+                    conditions: [
+                        {
+                            type: 'zoom',
+                            operator: 'IN',
+                            value: [11, 12, 13, 14]
+                        }
+                    ],
+                    style: {
+                        fill: true,
+                        fillColor: '#ffffff',
+                        fillOpacity: 0.2
+                    }
+                }
+            ]
+        };
+        assert.deepEqual(out, expected);
+    });
+
+    it('should handle zoom =', function () {
+        var s = '#world { polygon-fill: #ff0; } #world[zoom = 10] { polygon-fill: #fff; polygon-opacity: 0.2; }',
+            parsed = c2l.parse(s);
+        var out = c2l.out(parsed);
+
+        var expected = {
+            world: [
+                {
+                    style: {
+                        fill: true,
+                        fillColor: '#ffff00',
+                        fillOpacity: 1
+                    }
+                },
+                {
+                    conditions: [
+                        {
+                            type: 'zoom',
+                            operator: 'IN',
+                            value: [10]
+                        }
+                    ],
+                    style: {
+                        fill: true,
+                        fillColor: '#ffffff',
+                        fillOpacity: 0.2
+                    }
+                }
+            ]
+        };
+        assert.deepEqual(out, expected);
+    });
+
+    it('should ignore negative zooms', function () {
+        var s = '#world { polygon-fill: #ff0; } #world[zoom = -1] { polygon-fill: #fff; polygon-opacity: 0.2; }',
+            parsed = c2l.parse(s);
+        var out = c2l.out(parsed);
+
+        var expected = {
+            world: [
+                {
+                    style: {
+                        fill: true,
+                        fillColor: '#ffff00',
+                        fillOpacity: 1
+                    }
+                }
+            ]
+        };
+        assert.deepEqual(out, expected);
+    });
+
 });

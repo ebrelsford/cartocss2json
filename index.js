@@ -58,8 +58,16 @@ function out(rules) {
         if (styledRules.length > 1) {
             console.warn('cartocss2leaflet.out(): More styledRules than expected');
         }
+
+        layerRules[layer] = styledRules[0]
+
+        // Filter potentially null rules out
+        .filter(function (rule) {
+            return rule;
+        })
+
         // Sort by number of conditions
-        layerRules[layer] = styledRules[0].sort(function (a, b) {
+        .sort(function (a, b) {
             var aLen = a.conditions ? a.conditions.length : 0,
                 bLen = b.conditions ? b.conditions.length : 0;
             return aLen - bLen;
@@ -70,7 +78,12 @@ function out(rules) {
 
 function styleRule(rule) {
     return rule.map(function (rule) {
-        return styleSubRule(rule);
+        try {
+            return styleSubRule(rule);
+        } catch (e) {
+            console.warn(e);
+            return null;
+        }
     });
 }
 
@@ -89,7 +102,11 @@ function styleSubRule(rule) {
 
     var renderedRule = { style: style };
     if (zoom !== _carto2['default'].tree.Zoom.all) {
-        renderedRule.conditions = zoomCondition(zoom);
+        var conditions = zoomCondition(zoom);
+        if (!conditions) {
+            throw new Error('Invalid zoom condition');
+        }
+        renderedRule.conditions = conditions;
     }
     return renderedRule;
 }
@@ -137,6 +154,10 @@ function zoomCondition(zoom) {
             operator = 'IN';
             value = zooms;
         }
+    }
+
+    if (value.length === 0) {
+        return null;
     }
     return [{
         operator: operator,

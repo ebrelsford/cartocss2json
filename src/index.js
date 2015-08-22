@@ -32,18 +32,32 @@ export function out(rules) {
         if (styledRules.length > 1) {
             console.warn('cartocss2leaflet.out(): More styledRules than expected');
         }
-        // Sort by number of conditions
-        layerRules[layer] = styledRules[0].sort((a, b) => {
-            var aLen = (a.conditions ? a.conditions.length : 0),
-                bLen = (b.conditions ? b.conditions.length : 0);
-            return aLen - bLen;
-        });
+
+        layerRules[layer] = styledRules[0]
+
+            // Filter potentially null rules out
+            .filter((rule) => rule)
+
+            // Sort by number of conditions
+            .sort((a, b) => {
+                var aLen = (a.conditions ? a.conditions.length : 0),
+                    bLen = (b.conditions ? b.conditions.length : 0);
+                return aLen - bLen;
+            });
     });
     return layerRules;
 }
 
 function styleRule(rule) {
-    return rule.map(rule => styleSubRule(rule));
+    return rule.map(rule => {
+        try {
+            return styleSubRule(rule);
+        }
+        catch (e) {
+            console.warn(e);
+            return null;
+        }
+    });
 }
 
 function styleSubRule(rule) {
@@ -59,7 +73,11 @@ function styleSubRule(rule) {
 
     var renderedRule = { style: style };
     if (zoom !== carto.tree.Zoom.all) {
-        renderedRule.conditions = zoomCondition(zoom);
+        var conditions = zoomCondition(zoom);
+        if (!conditions) {
+            throw new Error('Invalid zoom condition');
+        }
+        renderedRule.conditions = conditions;
     }
     return renderedRule;
 }
@@ -109,6 +127,10 @@ export function zoomCondition(zoom) {
             operator = 'IN';
             value = zooms;
         }
+    }
+
+    if (value.length === 0) {
+        return null;
     }
     return [
         {
