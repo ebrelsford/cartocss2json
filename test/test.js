@@ -226,3 +226,38 @@ describe('layers', function () {
         assert.deepEqual(out, expected);
     });
 });
+
+describe('zoom', function () {
+    it('should handle zoom conditions', function () {
+        var s = '#world { polygon-fill: #ff0; } #world[zoom > 10] { polygon-fill: #fff; polygon-opacity: 0.2; }',
+            parsed = c2l.parse(s);
+        var out = c2l.out(parsed);
+
+        var expected = {
+            world: [
+                {
+                    style: {
+                        fill: true,
+                        fillColor: '#ffff00',
+                        fillOpacity: 1
+                    }
+                },
+                {
+                    conditions: [
+                        {
+                            type: 'zoom',
+                            operator: '>=',
+                            value: 11
+                        }
+                    ],
+                    style: {
+                        fill: true,
+                        fillColor: '#ffffff',
+                        fillOpacity: 0.2
+                    }
+                }
+            ]
+        };
+        assert.deepEqual(out, expected);
+    });
+});

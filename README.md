@@ -16,11 +16,10 @@ this repo, `npm install -g` and invoke the script:
 TODO
 ----
 
- * zoom (https://github.com/mapbox/carto/blob/master/lib/carto/tree/zoom.js#L112-L118)
+ * command line script
  * variables
  * :: attachments
  * / instances
- * command line script
 
 
 WON'T DO

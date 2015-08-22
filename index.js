@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports.parse = parse;
 exports.out = out;
+exports.zoomCondition = zoomCondition;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -23,6 +24,8 @@ var _rgbHex = require('rgb-hex');
 var _rgbHex2 = _interopRequireDefault(_rgbHex);
 
 var renderer = require('carto/lib/carto/renderer');
+_carto2['default'].tree = require('carto/lib/carto/tree');
+require('carto/lib/carto/tree/zoom');
 
 function parse(cartocss) {
     var env = {};
@@ -55,7 +58,12 @@ function out(rules) {
         if (styledRules.length > 1) {
             console.warn('cartocss2leaflet.out(): More styledRules than expected');
         }
-        layerRules[layer] = styledRules[0];
+        // Sort by number of conditions
+        layerRules[layer] = styledRules[0].sort(function (a, b) {
+            var aLen = a.conditions ? a.conditions.length : 0,
+                bLen = b.conditions ? b.conditions.length : 0;
+            return aLen - bLen;
+        });
     });
     return layerRules;
 }
@@ -68,10 +76,99 @@ function styleRule(rule) {
 
 function styleSubRule(rule) {
     var style = {};
-    rule.rules.forEach(function (rule) {
+    var sortedRules = rule.rules.sort(function (a, b) {
+        return a.index - b.index;
+    });
+    var zoom;
+    sortedRules.forEach(function (rule) {
+        if (!zoom || countZoomLevels(rule.zoom) < countZoomLevels(zoom)) {
+            zoom = rule.zoom;
+        }
         _underscore2['default'].extend(style, property(rule.name, getValue(rule.value.value)));
     });
-    return { style: style };
+
+    var renderedRule = { style: style };
+    if (zoom !== _carto2['default'].tree.Zoom.all) {
+        renderedRule.conditions = zoomCondition(zoom);
+    }
+    return renderedRule;
+}
+
+/**
+ * Count number of bits set in zoom integer
+ */
+function countZoomLevels(zoom) {
+    var count = 0;
+    while (zoom) {
+        count += zoom & 1;
+        zoom >>= 1;
+    }
+    return count;
+}
+
+/**
+ * Create a zoom condition given a zoom integer
+ */
+
+function zoomCondition(zoom) {
+    var zooms = [];
+    for (var i = 0; i <= _carto2['default'].tree.Zoom.maxZoom; i++) {
+        if (zoom & 1 << i) {
+            zooms.push(i);
+        }
+    }
+
+    var zoomRanges = detectZoomRanges(zooms),
+        value,
+        operator;
+    if (zoomRanges.length > 1) {
+        operator = 'IN';
+        value = zooms;
+    } else {
+        var range = zoomRanges[0];
+        if (range[0] === 0) {
+            operator = '<=';
+            value = range[1];
+        } else if (range[1] === _carto2['default'].tree.Zoom.maxZoom) {
+            operator = '>=';
+            value = range[0];
+        } else {
+            // We're only handling >=, <= and IN right now
+            operator = 'IN';
+            value = zooms;
+        }
+    }
+    return [{
+        operator: operator,
+        type: 'zoom',
+        value: value
+    }];
+}
+
+/**
+ * Find zoom ranges in a set of zooms
+ */
+function detectZoomRanges(zooms) {
+    var ranges = [];
+    var currentRange = [];
+    for (var i = 0, z = zooms[0]; i <= zooms.length; i++, z = zooms[i]) {
+        if (currentRange.length < 2) {
+            currentRange.push(z);
+            continue;
+        }
+        if (currentRange.length === 2) {
+            if (z === currentRange[1] + 1) {
+                currentRange[1] = z;
+            } else {
+                ranges.push(currentRange);
+                currentRange = [];
+            }
+        }
+    }
+    if (currentRange.length > 0) {
+        ranges.push(currentRange);
+    }
+    return ranges;
 }
 
 function getValue(value) {
