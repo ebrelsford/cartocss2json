@@ -13,13 +13,12 @@ Usage
 You can use it as a module or as a command line script. To do the latter, clone
 this repo, `npm install -g` and invoke the script:
 
-    cartocss2json <file>
+    cartocss2json < <file>
 
 
 TODO
 ----
 
- * command line script
  * variables
  * :: attachments
  * / instances

@@ -5,6 +5,10 @@ var renderer = require('carto/lib/carto/renderer');
 carto.tree = require('carto/lib/carto/tree'); 
 require('carto/lib/carto/tree/zoom');
 
+export function cartocss2json(cartocss) {
+    return out(parse(cartocss));
+}
+
 export function parse(cartocss) {
     var env = {};
     parser = carto.Parser(env);

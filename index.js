@@ -3,6 +3,7 @@
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
+exports.cartocss2json = cartocss2json;
 exports.parse = parse;
 exports.out = out;
 exports.zoomCondition = zoomCondition;
@@ -24,6 +25,10 @@ var _rgbHex2 = _interopRequireDefault(_rgbHex);
 var renderer = require('carto/lib/carto/renderer');
 _carto2['default'].tree = require('carto/lib/carto/tree');
 require('carto/lib/carto/tree/zoom');
+
+function cartocss2json(cartocss) {
+    return out(parse(cartocss));
+}
 
 function parse(cartocss) {
     var env = {};

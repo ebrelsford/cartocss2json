@@ -7,6 +7,9 @@
     "test": "mocha",
     "watch": "babel src/index.js --out-file index.js --watch"
   },
+  "bin": {
+    "cartocss2json": "./bin/cartocss2json.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/ebrelsford/cartocss2json.git"
@@ -24,6 +27,7 @@
   "homepage": "https://github.com/ebrelsford/cartocss2json#readme",
   "dependencies": {
     "carto": "^0.15.0",
+    "commander": "^2.8.1",
     "rgb-hex": "^1.0.0",
     "underscore": "^1.8.3"
   },
