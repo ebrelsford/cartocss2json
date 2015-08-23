@@ -1,34 +1,24 @@
 var c2l = require('../index');
+var _ = require('underscore');
 var chai = require('chai');
 var assert = chai.assert;
 
-describe('line', function () {
-    it('should handle line-color and line-width', function () {
-        var s = '#world { line-color: #fff; line-width: 3; }',
+describe('properties', function () {
+    it('should handle line-color', function () {
+        var s = '#world { line-color: #fff; }',
             out = c2l.out(c2l.parse(s));
-        var expected = {
-            world: [
-                {
-                    style: {
-                        color: '#ffffff',
-                        opacity: 1,
-                        weight: 3
-                    }
-                }
-            ]
-        };
-        assert.deepEqual(out, expected);
+        assert.deepProperty(out.world[0].style, 'line-color.alpha');
+        assert.deepProperty(out.world[0].style, 'line-color.rgb');
     });
 
     it('should handle line-opacity', function () {
-        var s = '#world { line-color: #fff; line-opacity: 0.2; }',
+        var s = '#world { line-opacity: 0.2; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
             world: [
                 {
                     style: {
-                        color: '#ffffff',
-                        opacity: 0.2
+                        'line-opacity': 0.2
                     }
                 }
             ]
@@ -43,7 +33,7 @@ describe('line', function () {
             world: [
                 {
                     style: {
-                        lineCap: 'round'
+                        'line-cap': 'round'
                     }
                 }
             ]
@@ -58,7 +48,7 @@ describe('line', function () {
             world: [
                 {
                     style: {
-                        dashArray: '8 2 8'
+                        'line-dasharray': [8, 2, 8]
                     }
                 }
             ]
@@ -73,31 +63,19 @@ describe('line', function () {
             world: [
                 {
                     style: {
-                        lineJoin: 'round'
+                        'line-join': 'round'
                     }
                 }
             ]
         };
         assert.deepEqual(out, expected);
     });
-});
 
-describe('marker', function () {
     it('should handle marker-fill', function () {
         var s = '#world { marker-fill: #fff; }',
             out = c2l.out(c2l.parse(s));
-        var expected = {
-            world: [
-                {
-                    style: {
-                        fill: true,
-                        fillColor: '#ffffff',
-                        fillOpacity: 1
-                    }
-                }
-            ]
-        };
-        assert.deepEqual(out, expected);
+        assert.deepProperty(out.world[0].style, 'marker-fill.alpha');
+        assert.deepProperty(out.world[0].style, 'marker-fill.rgb');
     });
 
     it('should handle marker-fill-opacity', function () {
@@ -107,7 +85,7 @@ describe('marker', function () {
             world: [
                 {
                     style: {
-                        fillOpacity: 0.2
+                        'marker-fill-opacity': 0.2
                     }
                 }
             ]
@@ -118,18 +96,8 @@ describe('marker', function () {
     it('should handle marker-line-color', function () {
         var s = '#world { marker-line-color: #fff; }',
             out = c2l.out(c2l.parse(s));
-        var expected = {
-            world: [
-                {
-                    style: {
-                        stroke: true,
-                        color: '#ffffff',
-                        opacity: 1
-                    }
-                }
-            ]
-        };
-        assert.deepEqual(out, expected);
+        assert.deepProperty(out.world[0].style, 'marker-line-color.alpha');
+        assert.deepProperty(out.world[0].style, 'marker-line-color.rgb');
     });
 
     it('should handle marker-line-opacity', function () {
@@ -139,7 +107,7 @@ describe('marker', function () {
             world: [
                 {
                     style: {
-                        opacity: 0.2
+                        'marker-line-opacity': 0.2
                     }
                 }
             ]
@@ -154,7 +122,7 @@ describe('marker', function () {
             world: [
                 {
                     style: {
-                        weight: 10
+                        'marker-line-width': 10
                     }
                 }
             ]
@@ -169,26 +137,29 @@ describe('marker', function () {
             world: [
                 {
                     style: {
-                        radius: 15
+                        'marker-width': 15
                     }
                 }
             ]
         };
         assert.deepEqual(out, expected);
     });
-});
 
-describe('polygon', function () {
-    it('should handle simple polygons', function () {
-        var s = '#world { polygon-fill: #fff; polygon-opacity: 0.2; }',
+    it('should handle polygon-fill', function () {
+        var s = '#world { polygon-fill: #fff; }',
+            out = c2l.out(c2l.parse(s));
+        assert.deepProperty(out.world[0].style, 'polygon-fill.alpha');
+        assert.deepProperty(out.world[0].style, 'polygon-fill.rgb');
+    });
+
+    it('should handle polygon-opacity', function () {
+        var s = '#world { polygon-opacity: 0.2; }',
             out = c2l.out(c2l.parse(s));
         var expected = {
             world: [
                 {
                     style: {
-                        fill: true,
-                        fillColor: '#ffffff',
-                        fillOpacity: 0.2
+                        'polygon-opacity': 0.2
                     }
                 }
             ]
@@ -203,62 +174,24 @@ describe('layers', function () {
             parsed = c2l.parse(s);
         var out = c2l.out(parsed);
 
-        var expected = {
-            sea: [
-                {
-                    style: {
-                        fill: true,
-                        fillColor: '#ffffff',
-                        fillOpacity: 0.2
-                    }
-                }
-            ],
-            world: [
-                {
-                    style: {
-                        fill: true,
-                        fillColor: '#ffff00',
-                        fillOpacity: 1
-                    }
-                }
-            ]
-        };
-        assert.deepEqual(out, expected);
+        assert.sameMembers(_.keys(out), ['sea', 'world']);
+        assert.sameMembers(_.keys(out.world[0].style), ['polygon-fill']);
+        assert.sameMembers(_.keys(out.sea[0].style), ['polygon-fill', 'polygon-opacity']);
     });
 });
 
 describe('zoom', function () {
-    it('should handle zoom conditions', function () {
+    it('should handle zoom >', function () {
         var s = '#world { polygon-fill: #ff0; } #world[zoom > 10] { polygon-fill: #fff; polygon-opacity: 0.2; }',
             parsed = c2l.parse(s);
         var out = c2l.out(parsed);
 
-        var expected = {
-            world: [
-                {
-                    style: {
-                        fill: true,
-                        fillColor: '#ffff00',
-                        fillOpacity: 1
-                    }
-                },
-                {
-                    conditions: [
-                        {
-                            type: 'zoom',
-                            operator: '>=',
-                            value: 11
-                        }
-                    ],
-                    style: {
-                        fill: true,
-                        fillColor: '#ffffff',
-                        fillOpacity: 0.2
-                    }
-                }
-            ]
+        var zoom = {
+            type: 'zoom',
+            operator: '>=',
+            value: 11
         };
-        assert.deepEqual(out, expected);
+        assert.deepEqual(out.world[1].conditions[0], zoom);
     });
 
     it('should handle zoom <', function () {
@@ -266,32 +199,12 @@ describe('zoom', function () {
             parsed = c2l.parse(s);
         var out = c2l.out(parsed);
 
-        var expected = {
-            world: [
-                {
-                    style: {
-                        fill: true,
-                        fillColor: '#ffff00',
-                        fillOpacity: 1
-                    }
-                },
-                {
-                    conditions: [
-                        {
-                            type: 'zoom',
-                            operator: '<=',
-                            value: 9
-                        }
-                    ],
-                    style: {
-                        fill: true,
-                        fillColor: '#ffffff',
-                        fillOpacity: 0.2
-                    }
-                }
-            ]
+        var zoom = {
+            type: 'zoom',
+            operator: '<=',
+            value: 9
         };
-        assert.deepEqual(out, expected);
+        assert.deepEqual(out.world[1].conditions[0], zoom);
     });
 
     it('should handle zoom IN', function () {
@@ -299,32 +212,12 @@ describe('zoom', function () {
             parsed = c2l.parse(s);
         var out = c2l.out(parsed);
 
-        var expected = {
-            world: [
-                {
-                    style: {
-                        fill: true,
-                        fillColor: '#ffff00',
-                        fillOpacity: 1
-                    }
-                },
-                {
-                    conditions: [
-                        {
-                            type: 'zoom',
-                            operator: 'IN',
-                            value: [11, 12, 13, 14]
-                        }
-                    ],
-                    style: {
-                        fill: true,
-                        fillColor: '#ffffff',
-                        fillOpacity: 0.2
-                    }
-                }
-            ]
+        var zoom = {
+            type: 'zoom',
+            operator: 'IN',
+            value: [11, 12, 13, 14]
         };
-        assert.deepEqual(out, expected);
+        assert.deepEqual(out.world[1].conditions[0], zoom);
     });
 
     it('should handle zoom =', function () {
@@ -332,51 +225,19 @@ describe('zoom', function () {
             parsed = c2l.parse(s);
         var out = c2l.out(parsed);
 
-        var expected = {
-            world: [
-                {
-                    style: {
-                        fill: true,
-                        fillColor: '#ffff00',
-                        fillOpacity: 1
-                    }
-                },
-                {
-                    conditions: [
-                        {
-                            type: 'zoom',
-                            operator: 'IN',
-                            value: [10]
-                        }
-                    ],
-                    style: {
-                        fill: true,
-                        fillColor: '#ffffff',
-                        fillOpacity: 0.2
-                    }
-                }
-            ]
+        var zoom = {
+            type: 'zoom',
+            operator: 'IN',
+            value: [10]
         };
-        assert.deepEqual(out, expected);
+        assert.deepEqual(out.world[1].conditions[0], zoom);
     });
 
     it('should ignore negative zooms', function () {
         var s = '#world { polygon-fill: #ff0; } #world[zoom = -1] { polygon-fill: #fff; polygon-opacity: 0.2; }',
             parsed = c2l.parse(s);
         var out = c2l.out(parsed);
-
-        var expected = {
-            world: [
-                {
-                    style: {
-                        fill: true,
-                        fillColor: '#ffff00',
-                        fillOpacity: 1
-                    }
-                }
-            ]
-        };
-        assert.deepEqual(out, expected);
+        assert.sameMembers(_.keys(out.world[0].style), ['polygon-fill']);
     });
 
 });

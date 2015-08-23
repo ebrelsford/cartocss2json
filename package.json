@@ -1,7 +1,7 @@
 {
-  "name": "cartocss2leaflet",
+  "name": "cartocss2json",
   "version": "0.0.1",
-  "description": "Convert CartoCSS to Leaflet styles",
+  "description": "Convert CartoCSS to JSON",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
@@ -9,20 +9,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/ebrelsford/cartocss2leaflet.git"
+    "url": "git+ssh://git@github.com/ebrelsford/cartocss2json.git"
   },
   "keywords": [
     "gis",
     "map",
-    "cartocss",
-    "leaflet"
+    "cartocss"
   ],
   "author": "Eric Brelsford <ebrelsford@gmail.com> (http://ebrelsford.github.io/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ebrelsford/cartocss2leaflet/issues"
+    "url": "https://github.com/ebrelsford/cartocss2json/issues"
   },
-  "homepage": "https://github.com/ebrelsford/cartocss2leaflet#readme",
+  "homepage": "https://github.com/ebrelsford/cartocss2json#readme",
   "dependencies": {
     "carto": "^0.15.0",
     "rgb-hex": "^1.0.0",

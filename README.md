@@ -1,7 +1,10 @@
-cartocss2leaflet
-================
+cartocss2json
+=============
 
-A node module for converting CartoCSS map styles to Leaflet styles.
+A node module for converting CartoCSS map styles to JSON.
+
+This is a first step toward converting CartoCSS to other formats (eg, Leaflet
+styles), what is returned is a simplified parse tree of the CartoCSS.
 
 
 Usage
@@ -10,7 +13,7 @@ Usage
 You can use it as a module or as a command line script. To do the latter, clone
 this repo, `npm install -g` and invoke the script:
 
-    cartocss2leaflet <file>
+    cartocss2json <file>
 
 
 TODO
@@ -20,22 +23,6 @@ TODO
  * variables
  * :: attachments
  * / instances
-
-
-WON'T DO
---------
-
-The plan is to support only those CartoCSS properties that map onto the
-Leaflet's SVG path properties. As such, there is no plan to support the 
-following properties:
-
- * `background-*`
- * `building-*`
- * `comp-op`
- * `point-*`
- * `raster-*`
- * `shield-*`
- * `text-*`
 
 
 Contributing
