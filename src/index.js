@@ -33,7 +33,7 @@ export function out(rules) {
     _.keys(rules).forEach((layer) => {
         var styledRules = rules[layer].map(rule => styleRule(rule));
         if (styledRules.length > 1) {
-            console.warn('cartocss2leaflet.out(): More styledRules than expected');
+            console.warn('cartocss2json.out(): More styledRules than expected');
         }
 
         layerRules[layer] = styledRules[0]
