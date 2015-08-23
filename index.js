@@ -18,10 +18,6 @@ var _carto = require('carto');
 
 var _carto2 = _interopRequireDefault(_carto);
 
-var _rgbHex = require('rgb-hex');
-
-var _rgbHex2 = _interopRequireDefault(_rgbHex);
-
 var renderer = require('carto/lib/carto/renderer');
 _carto2['default'].tree = require('carto/lib/carto/tree');
 require('carto/lib/carto/tree/zoom');
@@ -59,7 +55,7 @@ function out(rules) {
             return styleRule(rule);
         });
         if (styledRules.length > 1) {
-            console.warn('cartocss2leaflet.out(): More styledRules than expected');
+            console.warn('cartocss2json.out(): More styledRules than expected');
         }
 
         layerRules[layer] = styledRules[0]
