@@ -28,7 +28,6 @@
   "dependencies": {
     "carto": "^0.15.0",
     "commander": "^2.8.1",
-    "rgb-hex": "^1.0.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

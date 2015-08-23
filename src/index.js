@@ -1,6 +1,5 @@
 import _ from 'underscore';
 import carto from 'carto';
-import rgbHex from 'rgb-hex';
 var renderer = require('carto/lib/carto/renderer');
 carto.tree = require('carto/lib/carto/tree'); 
 require('carto/lib/carto/tree/zoom');
