@@ -18,6 +18,10 @@ var _carto = require('carto');
 
 var _carto2 = _interopRequireDefault(_carto);
 
+var _jsonStableStringify = require('json-stable-stringify');
+
+var _jsonStableStringify2 = _interopRequireDefault(_jsonStableStringify);
+
 var renderer = require('carto/lib/carto/renderer');
 _carto2['default'].tree = require('carto/lib/carto/tree');
 require('carto/lib/carto/tree/zoom');
@@ -51,34 +55,57 @@ function parse(cartocss) {
 function out(rules) {
     var layerRules = {};
     _underscore2['default'].keys(rules).forEach(function (layer) {
-        var styledRules = rules[layer].map(function (rule) {
-            return styleRule(rule);
+        var styledRules = rules[layer].map(function (layerRules) {
+            return styleLayer(layerRules);
+        })[0];
+
+        layerRules[layer] = [];
+        _underscore2['default'].each(styledRules, function (ruleGroup) {
+            // Filter potentially null rules out
+            ruleGroup = ruleGroup.filter(function (rule) {
+                return rule;
+            });
+            layerRules[layer] = layerRules[layer].concat(ruleGroup);
         });
-        if (styledRules.length > 1) {
-            console.warn('cartocss2json.out(): More styledRules than expected');
-        }
-
-        layerRules[layer] = styledRules[0]
-
-        // Filter potentially null rules out
-        .filter(function (rule) {
-            return rule;
-        })
-
-        // Sort by number of conditions
-        .sort(function (a, b) {
-            var aLen = a.conditions ? a.conditions.length : 0,
-                bLen = b.conditions ? b.conditions.length : 0;
-            return aLen - bLen;
-        });
+        layerRules[layer] = layerRules[layer].reverse();
     });
     return layerRules;
 }
 
-function styleRule(rule) {
-    return rule.map(function (rule) {
+/**
+ * Style a layer. The layer will have the following structure after being
+ * parsed:
+ *
+ *  [
+ *    [
+ *      { ... }, // Rule groups...
+ *      { ... },
+ *      { ... }
+ *    ]
+ *  ]
+ *
+ */
+function styleLayer(layer) {
+    var groups = _underscore2['default'].map(layer, function (ruleGroup) {
+        var groupedRules = _underscore2['default'].chain(ruleGroup.rules).map(function (rule) {
+            // Add conditions to each rule, if any
+            var conditions = getConditions(rule);
+            if (conditions && conditions.length > 0) {
+                rule.conditions = conditions;
+            }
+            return rule;
+        }).groupBy(function (subRule) {
+            // Group by conditions
+            return (0, _jsonStableStringify2['default'])(subRule.conditions);
+        }).value();
+        return _underscore2['default'].values(groupedRules);
+    });
+
+    return groups.map(function (ruleGroup) {
         try {
-            return styleSubRule(rule);
+            return ruleGroup.map(function (ruleSubgroup) {
+                return styleRuleGroup(ruleSubgroup);
+            });
         } catch (e) {
             console.warn(e);
             return null;
@@ -86,9 +113,9 @@ function styleRule(rule) {
     });
 }
 
-function styleSubRule(rule) {
+function styleRuleGroup(group) {
     var style = {};
-    var sortedRules = rule.rules.sort(function (a, b) {
+    var sortedRules = group.sort(function (a, b) {
         return a.index - b.index;
     });
     var zoom;
@@ -108,6 +135,17 @@ function styleSubRule(rule) {
         renderedRule.conditions = conditions;
     }
     return renderedRule;
+}
+
+function getConditions(rule) {
+    var conditions = [];
+    if (rule.zoom !== _carto2['default'].tree.Zoom.all) {
+        var zoomConditions = zoomCondition(rule.zoom);
+        if (zoomConditions) {
+            conditions = conditions.concat(zoomConditions);
+        }
+    }
+    return conditions;
 }
 
 /**

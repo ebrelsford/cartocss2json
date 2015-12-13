@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import carto from 'carto';
+import stringify from 'json-stable-stringify';
 var renderer = require('carto/lib/carto/renderer');
 carto.tree = require('carto/lib/carto/tree'); 
 require('carto/lib/carto/tree/zoom');
@@ -31,30 +32,56 @@ export function parse(cartocss) {
 export function out(rules) {
     var layerRules = {};
     _.keys(rules).forEach((layer) => {
-        var styledRules = rules[layer].map(rule => styleRule(rule));
-        if (styledRules.length > 1) {
-            console.warn('cartocss2json.out(): More styledRules than expected');
-        }
+        var styledRules = rules[layer].map(layerRules => styleLayer(layerRules))[0];
 
-        layerRules[layer] = styledRules[0]
-
+        layerRules[layer] = [];
+        _.each(styledRules, ruleGroup => {
             // Filter potentially null rules out
-            .filter((rule) => rule)
-
-            // Sort by number of conditions
-            .sort((a, b) => {
-                var aLen = (a.conditions ? a.conditions.length : 0),
-                    bLen = (b.conditions ? b.conditions.length : 0);
-                return aLen - bLen;
-            });
+            ruleGroup = ruleGroup.filter((rule) => rule);
+            layerRules[layer] = layerRules[layer].concat(ruleGroup);
+        });
+        layerRules[layer] = layerRules[layer].reverse();
     });
     return layerRules;
 }
 
-function styleRule(rule) {
-    return rule.map(rule => {
+/**
+ * Style a layer. The layer will have the following structure after being
+ * parsed:
+ *
+ *  [
+ *    [
+ *      { ... }, // Rule groups...
+ *      { ... },
+ *      { ... }
+ *    ]
+ *  ]
+ *
+ */
+function styleLayer(layer) {
+    var groups = _.map(layer, ruleGroup => {
+        var groupedRules =  _.chain(ruleGroup.rules)
+            .map(rule => {
+                // Add conditions to each rule, if any
+                var conditions = getConditions(rule);
+                if (conditions && conditions.length > 0) {
+                    rule.conditions = conditions;
+                }
+                return rule;
+            })
+            .groupBy(subRule => {
+                // Group by conditions
+                return stringify(subRule.conditions);
+            })
+            .value();
+        return _.values(groupedRules);
+    });
+
+    return groups.map(ruleGroup => {
         try {
-            return styleSubRule(rule);
+            return ruleGroup.map(ruleSubgroup => {
+                return styleRuleGroup(ruleSubgroup);
+            });
         }
         catch (e) {
             console.warn(e);
@@ -63,9 +90,9 @@ function styleRule(rule) {
     });
 }
 
-function styleSubRule(rule) {
+function styleRuleGroup(group) {
     var style = {};
-    var sortedRules = rule.rules.sort((a, b) => a.index - b.index);
+    var sortedRules = group.sort((a, b) => a.index - b.index);
     var zoom;
     sortedRules.forEach(function (rule) {
         if (!zoom || countZoomLevels(rule.zoom) < countZoomLevels(zoom)) {
@@ -83,6 +110,17 @@ function styleSubRule(rule) {
         renderedRule.conditions = conditions;
     }
     return renderedRule;
+}
+
+function getConditions(rule) {
+    var conditions = [];
+    if (rule.zoom !== carto.tree.Zoom.all) {
+        var zoomConditions = zoomCondition(rule.zoom);
+        if (zoomConditions) {
+            conditions = conditions.concat(zoomConditions);
+        }
+    }
+    return conditions;
 }
 
 /**
