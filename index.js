@@ -62,10 +62,12 @@ function out(rules) {
         layerRules[layer] = [];
         _underscore2['default'].each(styledRules, function (ruleGroup) {
             // Filter potentially null rules out
-            ruleGroup = ruleGroup.filter(function (rule) {
-                return rule;
-            });
-            layerRules[layer] = layerRules[layer].concat(ruleGroup);
+            if (ruleGroup) {
+                ruleGroup = ruleGroup.filter(function (rule) {
+                    return rule;
+                });
+                layerRules[layer] = layerRules[layer].concat(ruleGroup);
+            }
         });
         layerRules[layer] = layerRules[layer].reverse();
     });

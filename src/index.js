@@ -37,8 +37,10 @@ export function out(rules) {
         layerRules[layer] = [];
         _.each(styledRules, ruleGroup => {
             // Filter potentially null rules out
-            ruleGroup = ruleGroup.filter((rule) => rule);
-            layerRules[layer] = layerRules[layer].concat(ruleGroup);
+            if (ruleGroup) {
+                ruleGroup = ruleGroup.filter((rule) => rule);
+                layerRules[layer] = layerRules[layer].concat(ruleGroup);
+            }
         });
         layerRules[layer] = layerRules[layer].reverse();
     });
