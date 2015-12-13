@@ -191,7 +191,7 @@ describe('zoom', function () {
             operator: '>=',
             value: 11
         };
-        assert.deepEqual(out.world[1].conditions[0], zoom);
+        assert.deepEqual(out.world[2].conditions[0], zoom);
     });
 
     it('should handle zoom <', function () {
@@ -204,7 +204,7 @@ describe('zoom', function () {
             operator: '<=',
             value: 9
         };
-        assert.deepEqual(out.world[1].conditions[0], zoom);
+        assert.deepEqual(out.world[2].conditions[0], zoom);
     });
 
     it('should handle zoom IN', function () {
@@ -217,7 +217,7 @@ describe('zoom', function () {
             operator: 'IN',
             value: [11, 12, 13, 14]
         };
-        assert.deepEqual(out.world[1].conditions[0], zoom);
+        assert.deepEqual(out.world[2].conditions[0], zoom);
     });
 
     it('should handle zoom =', function () {
@@ -230,7 +230,7 @@ describe('zoom', function () {
             operator: 'IN',
             value: [10]
         };
-        assert.deepEqual(out.world[1].conditions[0], zoom);
+        assert.deepEqual(out.world[2].conditions[0], zoom);
     });
 
     it('should ignore negative zooms', function () {
